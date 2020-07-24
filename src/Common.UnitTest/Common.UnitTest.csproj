@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>SmartClass</RootNamespace>
+    <RootNamespace>Common</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
