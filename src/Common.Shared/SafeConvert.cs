@@ -30,7 +30,7 @@ namespace Common
         #region for extension
         
         private static readonly Lazy<SafeConvert> _lazy = new Lazy<SafeConvert>(() => new SafeConvert());
-        public static ISafeConvert Current => ServiceLocator.Current.GetService<ISafeConvert>() ?? _lazy.Value;
+        public static ISafeConvert Instance => ServiceLocator.Current.GetService<ISafeConvert>() ?? _lazy.Value;
 
         #endregion
     }

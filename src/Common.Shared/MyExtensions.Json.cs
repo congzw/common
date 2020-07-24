@@ -154,7 +154,7 @@ namespace Common
                 return defaultValue;
             }
 
-            var convertTo = SafeConvert.Current.SafeConvertTo<TValue>(dictionary[theKey]);
+            var convertTo = SafeConvert.Instance.SafeConvertTo<TValue>(dictionary[theKey]);
             return convertTo;
         }
 
