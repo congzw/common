@@ -7,6 +7,8 @@
 - module
 - logging
 - scoped hubs
+- multi tenants
+- dynamic area sites
 
 # change list
 
