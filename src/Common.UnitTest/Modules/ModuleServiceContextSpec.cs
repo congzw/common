@@ -28,10 +28,8 @@ namespace Common.Modules
             builder.Build();
 
             var context = provider.GetService<IModuleServiceContext>();
-            var appServices = context.Services;
-            
-            appServices.ShouldNotNull();
-            appServices.ShouldEqual(services);
+            context.ShouldNotNull();
+
 
             var modules = builder.ApplicationServices.GetServices<IModuleStartup>().ToList();
             modules.Log();

@@ -25,7 +25,6 @@ namespace Common.Modules.Extensions
             {
                 context = new DefaultModuleServiceContext()
                 {
-                    Services = services
                 };
 
                 var contextDefaultImplType = context.GetType();
