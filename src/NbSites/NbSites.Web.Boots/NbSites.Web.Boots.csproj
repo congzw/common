@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
-    <ProjectReference Include="..\Modules\Demo\Demo.csproj" />
   </ItemGroup>
 
 </Project>
