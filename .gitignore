@@ -268,3 +268,7 @@ __pycache__/
 
 # hide modules
 **/package-lock.json
+
+## hide areas files for .gitignore
+
+**/NbSites.Web/Areas

@@ -12,7 +12,7 @@ namespace Common.Web
             set
             {
                 base.ViewContext = value;
-                Context.GetMyRequestContext().AppendPageInfos(base.ViewContext);
+                MyContext.GetCurrent(Context).AppendPageInfos(base.ViewContext);
             }
         }
     }

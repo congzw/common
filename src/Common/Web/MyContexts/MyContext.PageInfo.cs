@@ -15,20 +15,20 @@ namespace Common.Web.MyContexts
     public static class MyPageInfoExtensions
     {
         private static string Group_PageInfos = "PageInfos";
-        public static string GetGroupName_PageInfos(this MyRequestContext context)
+        public static string GetGroupName_PageInfos(this MyContext context)
         {
             return Group_PageInfos;
         }
-
-        public static MyRequestContext AppendPageInfos(this MyRequestContext context, ViewContext viewContext)
+        
+        public static MyContext AppendPageInfos(this MyContext context, ViewContext viewContext)
         {
             var theGroup = context.GetOrCreate(context.GetGroupName_PageInfos());
             var myPageInfo = viewContext.CreateMyPageInfo();
-            theGroup.Items[viewContext.View.Path] = myPageInfo.ToJson(false);
+            theGroup.Items[viewContext.View.Path] = myPageInfo.ToJson();
             return context;
         }
         
-        public static IList<MyPageInfo> GetPageInfos(this MyRequestContext context)
+        public static IList<MyPageInfo> GetPageInfos(this MyContext context)
         {
             var myPageInfos = new List<MyPageInfo>();
             var theGroup = context.GetOrCreate(context.GetGroupName_PageInfos(), false);

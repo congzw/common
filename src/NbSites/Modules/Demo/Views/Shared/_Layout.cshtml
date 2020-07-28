@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Common
+@using Common.Web.MyContexts
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -8,6 +10,11 @@
     <div>
         <h1>DEMO Layout</h1>
         @RenderBody()
+        <partial name="_Foo" />
     </div>
+    <hr />
+    <p>
+        <pre>@MyContext.GetCurrent(this.Context).ToJson(true)</pre>
+    </p>
 </body>
 </html>

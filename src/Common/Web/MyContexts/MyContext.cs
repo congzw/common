@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 namespace Common.Web.MyContexts
 {
-    public class MyRequestContext
+    public class MyContext
     {
-        public MyRequestContext()
+        public MyContext()
         {
             Groups = new List<MyContextGroup>();
         }
         
         public IList<MyContextGroup> Groups { get; set; }
 
-        public static MyRequestContext Create()
+        public static MyContext GetCurrent(HttpContext httpContext)
         {
-            var context = new MyRequestContext();
-            return context;
+            return MyContextService.Resolve().GetMyContext(httpContext);
         }
     }
 
@@ -33,31 +31,8 @@ namespace Common.Web.MyContexts
         public IDictionary<string, string> Items { get; set; }
     }
     
-    public static class MyRequestContextExtensions
+    public static class MyContextExtensions
     {
-        public static string MyRequestContextCacheKey = "MyCache." + typeof(MyRequestContext).FullName;
-
-        public static MyRequestContext GetMyRequestContext(this HttpContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (context.Items[MyRequestContextCacheKey] != null)
-            {
-                return (MyRequestContext)context.Items[MyRequestContextCacheKey];
-            }
-
-            var requestContext = MyRequestContext.Create()
-                .SetRouteInfo(context.GetRouteData())
-                .SetQueryInfo(context.Request)
-                .SetUserInfo(context.Request);
-            context.Items[MyRequestContextCacheKey] = requestContext;
-
-            return requestContext;
-        }
-
         internal static void SetProperties(this IDictionary<string, string> items, object instance)
         {
             if (instance == null)
@@ -89,7 +64,7 @@ namespace Common.Web.MyContexts
             }
         }
 
-        internal static MyContextGroup GetOrCreate(this MyRequestContext context, string group, bool autoCreate = true)
+        internal static MyContextGroup GetOrCreate(this MyContext context, string group, bool autoCreate = true)
         {
             if (context == null)
             {

@@ -13,20 +13,19 @@ namespace Common.Web.MyContexts
     public static class MyQueryInfoExtensions
     {
         private static string Group_QueryInfos = "QueryInfos";
-        public static string GetGroupName_QueryInfos(this MyRequestContext context)
+        public static string GetGroupName_QueryInfos(this MyContext context)
         {
             return Group_QueryInfos;
         }
 
-        public static MyRequestContext SetQueryInfo(this MyRequestContext context, HttpRequest httpRequest)
+        public static MyContext SetQueryInfo(this MyContext context, HttpRequest httpRequest)
         {
             var theGroup = context.GetOrCreate(context.GetGroupName_QueryInfos());
             var queryCollection = httpRequest.Query;
             var keys = queryCollection.Keys;
             foreach (var key in keys)
             {
-                StringValues values;
-                if (!queryCollection.TryGetValue(key, out values))
+                if (!queryCollection.TryGetValue(key, out var values))
                 {
                     theGroup.Items[key] = null;
                 }
@@ -43,7 +42,7 @@ namespace Common.Web.MyContexts
             return context;
         }
 
-        public static MyQueryInfo GetQueryInfo(this MyRequestContext context)
+        public static MyQueryInfo GetQueryInfo(this MyContext context)
         {
             var info = new MyQueryInfo();
             var theGroup = context.GetOrCreate(context.GetGroupName_QueryInfos());

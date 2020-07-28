@@ -11,19 +11,19 @@ namespace Common.Web.MyContexts
     public static class MyUserInfoExtensions
     {
         private static string Group_UserInfos = "UserInfos";
-        public static string GetGroupName_UserInfos(this MyRequestContext context)
+        public static string GetGroupName_UserInfos(this MyContext context)
         {
             return Group_UserInfos;
         }
 
-        public static MyRequestContext SetUserInfo(this MyRequestContext context, HttpRequest httpRequest)
+        public static MyContext SetUserInfo(this MyContext context, HttpRequest httpRequest)
         {
             var theGroup = context.GetOrCreate(context.GetGroupName_UserInfos());
             //todo
             return context;
         }
 
-        public static MyUserInfo GetUserInfo(this MyRequestContext context)
+        public static MyUserInfo GetUserInfo(this MyContext context)
         {
             var info = new MyUserInfo();
             var theGroup = context.GetOrCreate(context.GetGroupName_UserInfos());

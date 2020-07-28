@@ -17,12 +17,12 @@ namespace Common.Web.MyContexts
     public static class MyRouteInfoExtensions
     {
         private static string Group_RouteInfos = "RouteInfos";
-        public static string GetGroupName_RouteInfos(this MyRequestContext context)
+        public static string GetGroupName_RouteInfos(this MyContext context)
         {
             return Group_RouteInfos;
         }
 
-        public static MyRequestContext SetRouteInfo(this MyRequestContext context, RouteData routeData)
+        public static MyContext SetRouteInfo(this MyContext context, RouteData routeData)
         {
             if (context == null)
             {
@@ -42,7 +42,7 @@ namespace Common.Web.MyContexts
             return context;
         }
 
-        public static MyRouteInfo GetRouteInfo(this MyRequestContext context)
+        public static MyRouteInfo GetRouteInfo(this MyContext context)
         {
             var info = new MyRouteInfo();
             var theGroup = context.GetOrCreate(context.GetGroupName_RouteInfos());
