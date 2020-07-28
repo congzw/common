@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\**" />
+    <Content Remove="Areas\**" />
+    <EmbeddedResource Remove="Areas\**" />
+    <None Remove="Areas\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\NbSites.Web.Boots\NbSites.Web.Boots.csproj" />
+  </ItemGroup>
+
+  <Target Name="CopyAreaFiles">
+    <ItemGroup>
+      <MyCopyAreaFiles Include="$(SolutionDir)\NbSites\Modules\**\Content\**\*.*" />
+      <MyCopyAreaFiles Include="$(SolutionDir)\NbSites\Modules\**\Views\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(MyCopyAreaFiles)" DestinationFiles="@(MyCopyAreaFiles->'$(SolutionDir)\NbSites\NbSites.Web\Areas\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Message Text="----CopyAreaFiles完成----" Importance="high" />
+  </Target>
+
+  <!--fix vs call "CopyAreaFiles" failed because iis lock problems-->
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Touch Files="App_Offline.htm" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <CallTarget Targets="CopyAreaFiles" />
+    <Delete Files="App_Offline.htm" />
+  </Target>
+
+</Project>

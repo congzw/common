@@ -1,0 +1,14 @@
+﻿@using NbSites.Common
+@{
+    var serverNow = ViewData["ServerDate"] ?? MyDateHelper.Instance.GetDateNow();
+}
+<span id="serverClock"></span>
+<script type="text/javascript" id="@this.Path">
+    //inline invoke js module 
+    require(['myClock'], function (myClock) {
+        "use strict";
+        var serverDate = new Date('@serverNow');
+        var helper = myClock.init(serverDate, 'serverClock', { withDayOfWeek: true, withDate: true, withColor: true });
+        helper.beginTick();
+    });
+</script>

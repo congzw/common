@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <AssemblyName>NbSites.Areas.Web.Demo</AssemblyName>
+    <RootNamespace>NbSites.Areas.Web.Demo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Content\scripts\home_index.js" />
+    <None Remove="Views\Shared\_RequireConfigArea.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Content\scripts\home_index.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Views\Shared\_RequireConfigArea.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.csproj" />
+  </ItemGroup>
+
+</Project>

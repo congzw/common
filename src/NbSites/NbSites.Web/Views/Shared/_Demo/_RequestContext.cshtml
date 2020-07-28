@@ -1,0 +1,20 @@
+﻿@using NbSites.Common.Contexts
+@{
+    var myRequestContext = this.Context.GetMyRequestContext();
+}
+<ul>
+    @foreach (var group in myRequestContext.Groups)
+    { 
+        <li>
+           @group.GroupName: <span>@group.Items.Count</span>
+           <ol>
+               @foreach (var item in group.Items)
+               {
+                   <li>
+                       @item.Key: <span style="color: red">@item.Value</span>
+                   </li>
+               }
+           </ol>
+       </li>
+    }
+</ul>
