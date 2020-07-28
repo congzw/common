@@ -5,14 +5,15 @@ namespace Common.AppContexts
 {
     public class MyAppContext : IShouldHaveBags
     {
-        public IDictionary<string, object> Items { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        
+        public IDictionary<string, object> Items { get; set; } = BagsHelper.Create();
+
+        #region for di extensions
+
+        //don't delete this method!
         public string GetBagsPropertyName()
         {
             return nameof(Items);
         }
-
-        #region for di extensions
 
         public static MyAppContext Current => Resolve();
 
@@ -21,6 +22,4 @@ namespace Common.AppContexts
 
         #endregion
     }
-
-
 }
