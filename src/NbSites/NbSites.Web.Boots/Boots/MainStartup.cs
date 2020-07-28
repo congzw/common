@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NbSites.Web.Apis;
 
 namespace NbSites.Web.Boots
 {
@@ -23,7 +24,7 @@ namespace NbSites.Web.Boots
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddSingleton<TestAppService>();
+            services.AddSingleton<TestAppService>();
 
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMyModulePart();

@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace NbSites.Web
 {
-    public class Startup
+    public class ApplicationStartup
     {
         public void ConfigureServices(IServiceCollection services)
         {
