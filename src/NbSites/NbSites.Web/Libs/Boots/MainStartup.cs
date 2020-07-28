@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NbSites.Web.Apis;
 
-namespace NbSites.Web.Boots
+namespace NbSites.Web.Libs.Boots
 {
     public class MainStartup : IModuleStartup
     {

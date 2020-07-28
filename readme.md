@@ -13,11 +13,10 @@
 ## develop dynamic modules support site
 
 - NbSites.Web
-- NbSites.Web.Boots
-- NbSites.Web.Areas.Foo(Foo)
+- NbSites.Web.Areas.Demo(Demo)
 
-when develop and debug, add module projects references to NbSites.Web.Boots(if not so, web have to copy module assemblies to bin area by hand)
-when publish, remove module projects references from NbSites.Web.Boots(so that site can load module assemblies dynamicly without rumtime error)
+when develop and debug, add module projects references to NbSites.Web(or else, web have to copy module assemblies to the main site by hand)
+when publish, remove module projects references from NbSites.Web(so the main site can load module assemblies dynamic without runtime error)
 
 # change list
 

@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
-    <ProjectReference Include="..\NbSites.Web.Boots\NbSites.Web.Boots.csproj" />
+    <ProjectReference Include="..\Modules\Demo\Demo.csproj" />
   </ItemGroup>
 
   <Target Name="CopyAreaFiles">

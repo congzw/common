@@ -6,21 +6,12 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
-namespace NbSites.Web.Boots
+namespace NbSites.Web.Libs.Boots
 {
     public static partial class BootExt
     {
         public static void UseMyStaticFiles(this IApplicationBuilder app, IHostingEnvironment hostingEnvironment, ILogger logger)
         {
-            ////map request "~/" to "index.html"
-            //app.UseDefaultFiles(new DefaultFilesOptions()
-            //{
-            //    DefaultFileNames = new List<string>()
-            //    {
-            //        "index.html"
-            //    }
-            //});
-
             app.UseStaticFiles(new StaticFileOptions
             {
                 ContentTypeProvider = new FileExtensionContentTypeProvider
@@ -50,32 +41,7 @@ namespace NbSites.Web.Boots
                     FileProvider = physicalFileProvider,
                     RequestPath = requestPath
                 });
-
-                ////make directory browser ok:
-                //app.UseDirectoryBrowser(new DirectoryBrowserOptions
-                //{
-                //    FileProvider = physicalFileProvider,
-                //    RequestPath = requestPath
-                //});
             }
-
-            ////make both rq ok:
-            ////rq => MyImages/oops.png
-            ////rq => images/oops.png
-            //var fileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images"));
-            //var imageRequestPath = "/MyImages";
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = fileProvider,
-            //    RequestPath = imageRequestPath
-            //});
-
-            ////make directory browser ok:
-            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            //{
-            //    FileProvider = fileProvider,
-            //    RequestPath = imageRequestPath
-            //});
         }
     }
 }
