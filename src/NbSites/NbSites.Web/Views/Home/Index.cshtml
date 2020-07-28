@@ -1,6 +1,18 @@
-﻿@{
-    
+﻿@using Common
+@using Common.AppContexts
+@{
     ViewBag.Title = "Root Home Index";
+    var myAppContext = MyAppContext.Current;
+    var entryUri = myAppContext.GetBagValue("EntryUri", string.Empty);
+    if (!string.IsNullOrWhiteSpace(entryUri))
+    {
+        if (entryUri.StartsWith("~"))
+        {
+            entryUri = this.Url.Content(entryUri);
+        }
+        this.Context.Response.Redirect(entryUri, false);
+        return;
+    }
 }
 
 <h2>@this.Path</h2>

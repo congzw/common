@@ -1,4 +1,6 @@
-﻿using Common.Modules;
+﻿using Common;
+using Common.AppContexts;
+using Common.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using NbSites.Areas.Web.Demo.Libs.AppServices;
@@ -18,6 +20,8 @@ namespace NbSites.Areas.Web.Demo.Libs.Boots
 
         public void Configure(IApplicationBuilder builder)
         {
+            var myAppContext = MyAppContext.Current;
+            myAppContext.SetBagValue("EntryUri", "~/Demo/Home/Index");
         }
     }
 }
