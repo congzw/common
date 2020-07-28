@@ -54,6 +54,7 @@ namespace Common
                 return new IPEndPoint(address, port);
             }
         }
+
         /// <summary>
         /// object as json
         /// </summary>
@@ -71,6 +72,11 @@ namespace Common
             settings.Converters.Add(new IPEndPointConverter());
             settings.Formatting = indented ? Formatting.Indented : Formatting.None;
             return JsonConvert.SerializeObject(model, settings);
+        }
+
+        public static T FromJson<T>(this string json, T defaultValue)
+        {
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         /// <summary>
