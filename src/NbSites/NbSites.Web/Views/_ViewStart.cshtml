@@ -1,7 +1,5 @@
-﻿@using Common.Layouts
-
-@inject LayoutContext layoutContext
+﻿@using Common.Web.Layouts
 @{
     //Layout = "_Layout";
-    Layout = layoutContext.Config.Layout;
+    Layout = LayoutContext.Current.Layout;
 }

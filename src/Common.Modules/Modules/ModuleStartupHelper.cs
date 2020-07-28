@@ -14,13 +14,23 @@ namespace Common.Modules
         public ModuleStartupHelper()
         {
             LoadContext = AssemblyLoadContext.Default;
-            GetAssemblies = () => GetModuleAssemblies(AppDomain.CurrentDomain.BaseDirectory);
+            GetAssemblies = () => GetModuleAssemblies(AppDomain.CurrentDomain.BaseDirectory, null);
         }
-
-
+        
         public AssemblyLoadContext LoadContext { get; set; }
         
         public Func<IList<Assembly>> GetAssemblies { get; set; }
+
+        public IList<Assembly> GetAllModuleAssemblies(string root, params string[] modulePrefixes)
+        {
+            var assemblies = new List<Assembly>();
+            foreach (var modulePrefix in modulePrefixes)
+            {
+                var moduleAssemblies = GetModuleAssemblies(root, modulePrefix);
+                assemblies.AddRange(moduleAssemblies);
+            }
+            return assemblies;
+        }
 
         public IDictionary<string, string> AddApplicationPart(IMvcBuilder mvcBuilder)
         {
@@ -45,7 +55,7 @@ namespace Common.Modules
         }
 
         public static ModuleStartupHelper Instance = new ModuleStartupHelper();
-        private IList<Assembly> GetModuleAssemblies(string root, string modulePrefix = null)
+        private IList<Assembly> GetModuleAssemblies(string root, string modulePrefix)
         {
             if (string.IsNullOrWhiteSpace(modulePrefix))
             {
