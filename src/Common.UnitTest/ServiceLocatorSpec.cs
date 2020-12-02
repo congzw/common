@@ -10,41 +10,60 @@ namespace Common
         [TestMethod]
         public void Current_NotInit_Should_ReturnDefault()
         {
-            var serviceLocator = ServiceLocator.Current;
-            serviceLocator.ShouldNotNull();
-            serviceLocator.GetType().ShouldEqual(typeof(NullServiceLocator));
-            serviceLocator.GetServices<object>().ShouldEmpty();
-            serviceLocator.GetService<object>().ShouldNull();
+            var theLocator = ServiceLocator.Current;
+            theLocator.ShouldNotNull();
+            theLocator.GetType().ShouldEqual(typeof(NullServiceLocator));
+            theLocator.GetServices<object>().ShouldEmpty();
+            theLocator.GetService<object>().ShouldNull();
         }
 
         [TestMethod]
-        public void Current_Init_Should_ReturnMock()
+        public void Current_Replace_Should_ReturnMock()
         {
-            ServiceLocator.Initialize(Create());
+            var serviceLocator = new ServiceLocator();
+            var rootServiceProvider = new MockRootServiceProvider(true);
+            serviceLocator.Initialize(rootServiceProvider);
 
-            var serviceLocator = ServiceLocator.Current;
-            serviceLocator.ShouldNotNull();
-            serviceLocator.GetType().ShouldEqual(typeof(MockServiceLocator));
-
-            ServiceLocator.Reset();
+            var theLocator = serviceLocator.Resolve();
+            theLocator.ShouldNotNull();
+            theLocator.GetType().ShouldEqual(typeof(MockServiceLocator));
         }
 
         [TestMethod]
-        public void Current_Reset_Should_ReturnReturnDefault()
+        public void Current_NotReplace_Should_ReturnDefault()
         {
-            ServiceLocator.Reset();
+            var serviceLocator = new ServiceLocator();
+            var rootServiceProvider = new MockRootServiceProvider(false);
+            serviceLocator.Initialize(rootServiceProvider);
 
-            var serviceLocator = ServiceLocator.Current;
-            serviceLocator.ShouldNotNull();
-            serviceLocator.GetType().ShouldEqual(typeof(NullServiceLocator));
-            serviceLocator.GetServices<object>().ShouldEmpty();
-            serviceLocator.GetService<object>().ShouldNull();
+            var theLocator = serviceLocator.Resolve();
+            theLocator.ShouldNotNull();
+            theLocator.GetType().ShouldEqual(typeof(NullServiceLocator));
+        }
+    }
+
+    public class MockRootServiceProvider : IServiceProvider 
+    {
+        public bool Replaced { get; }
+
+        public MockRootServiceProvider(bool replaced)
+        {
+            Replaced = replaced;
         }
 
-        private IServiceLocator Create()
+        public object GetService(Type serviceType)
         {
-            var mockServiceLocator = new MockServiceLocator();
-            return mockServiceLocator;
+            if (serviceType.IsAssignableFrom(typeof(IServiceProvider)))
+            {
+                return this;
+            }
+
+            if (serviceType.IsAssignableFrom(typeof(IServiceLocator)))
+            {
+                return Replaced ? new MockServiceLocator() : null;
+            }
+
+            return null;
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common
 {
@@ -35,28 +36,41 @@ namespace Common
         }
     }
 
-    //ServiceLocator is an anti-pattern, avoid using it as possible as you can!
-    //only for static inject or legacy code hacking!
-    public static class ServiceLocator
+    ////ServiceLocator is an anti-pattern, avoid using it as possible as you can!
+    ////only for static inject or legacy code hacking!
+    public class ServiceLocator
     {
-        private static IServiceLocator diProxy;
-
-        private static readonly IServiceLocator _nullLocator = new NullServiceLocator();
-
-        public static IServiceLocator Current => diProxy ?? _nullLocator;
-
-        public static void Initialize(IServiceLocator proxy)
+        public Func<IServiceLocator> Resolve = () => NullLazy.Value;
+        public void Initialize(IServiceProvider rootServiceProvider)
         {
-            if (diProxy != null)
+            if (rootServiceProvider == null) throw new ArgumentNullException(nameof(rootServiceProvider));
+            _returnNull = false;
+            Resolve = () =>
             {
-                throw new InvalidOperationException("不能被重复初始化！");
-            }
-            diProxy = proxy;
-        }
+                if (_returnNull)
+                {
+                    return NullLazy.Value;
+                }
 
-        public static void Reset()
-        {
-            diProxy = null;
+                var serviceProvider = rootServiceProvider.GetService<IServiceProvider>();
+                var serviceLocator = serviceProvider.GetService<IServiceLocator>();
+                if (serviceLocator != null)
+                {
+                    return serviceLocator;
+                }
+
+                _returnNull = true;
+                return NullLazy.Value;
+            };
         }
+        private static readonly Lazy<NullServiceLocator> NullLazy = new Lazy<NullServiceLocator>(() => new NullServiceLocator());
+        private bool _returnNull = true;
+
+        #region for simple use
+
+        public static IServiceLocator Current => Instance.Resolve();
+        public static ServiceLocator Instance => new ServiceLocator();
+
+        #endregion
     }
 }

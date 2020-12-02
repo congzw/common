@@ -16,13 +16,16 @@ namespace Common
                 //only add if the service doesn't exist
                 services.AddHttpContextAccessor();
             }
+
+            services.AddSingleton(ServiceLocator.Instance);
             services.AddSingleton<IServiceLocator, HttpRequestServiceLocator>();
+            
             return services;
         }
 
         public static void UseMyServiceLocator(this IApplicationBuilder app)
         {
-            ServiceLocator.Initialize(app.ApplicationServices.GetService<IServiceLocator>());
+            ServiceLocator.Instance.Initialize(app.ApplicationServices);
         }
     }
 
@@ -31,53 +34,53 @@ namespace Common
     //2 use => ServiceLocator.Initialize(app.ApplicationServices.GetService<IServiceLocator>());
     public class HttpRequestServiceLocator : IServiceLocator
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _rootServiceProvider;
 
-        public HttpRequestServiceLocator(IServiceProvider serviceProvider)
+        public HttpRequestServiceLocator(IServiceProvider rootServiceProvider)
         {
-            _serviceProvider = serviceProvider;
+            _rootServiceProvider = rootServiceProvider;
         }
 
         public T GetService<T>()
         {
-            var contextAccessor = _serviceProvider.GetService<IHttpContextAccessor>();
+            var contextAccessor = _rootServiceProvider.GetService<IHttpContextAccessor>();
             var httpContext = contextAccessor?.HttpContext;
             if (httpContext == null)
             {
-                return _serviceProvider.GetService<T>();
+                return _rootServiceProvider.GetService<T>();
             }
             return contextAccessor.HttpContext.RequestServices.GetService<T>();
         }
 
         public IEnumerable<T> GetServices<T>()
         {
-            var contextAccessor = _serviceProvider.GetService<IHttpContextAccessor>();
+            var contextAccessor = _rootServiceProvider.GetService<IHttpContextAccessor>();
             var httpContext = contextAccessor?.HttpContext;
             if (httpContext == null)
             {
-                return _serviceProvider.GetServices<T>();
+                return _rootServiceProvider.GetServices<T>();
             }
             return contextAccessor.HttpContext.RequestServices.GetServices<T>();
         }
 
         public object GetService(Type type)
         {
-            var contextAccessor = _serviceProvider.GetService<IHttpContextAccessor>();
+            var contextAccessor = _rootServiceProvider.GetService<IHttpContextAccessor>();
             var httpContext = contextAccessor?.HttpContext;
             if (httpContext == null)
             {
-                return _serviceProvider.GetService(type);
+                return _rootServiceProvider.GetService(type);
             }
             return contextAccessor.HttpContext.RequestServices.GetService(type);
         }
 
         public IEnumerable<object> GetServices(Type type)
         {
-            var contextAccessor = _serviceProvider.GetService<IHttpContextAccessor>();
+            var contextAccessor = _rootServiceProvider.GetService<IHttpContextAccessor>();
             var httpContext = contextAccessor?.HttpContext;
             if (httpContext == null)
             {
-                return _serviceProvider.GetServices(type);
+                return _rootServiceProvider.GetServices(type);
             }
             return contextAccessor.HttpContext.RequestServices.GetServices(type);
         }
