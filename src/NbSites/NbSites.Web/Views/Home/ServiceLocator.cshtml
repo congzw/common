@@ -1,0 +1,30 @@
+﻿@using Microsoft.Extensions.DependencyInjection
+@using Common
+@inject IServiceProvider InjectedProvider
+@{
+    var providerFromInjected = InjectedProvider.GetService<IServiceProvider>();
+    var serviceLocator = ServiceLocator.Current;
+    var providerFromLocator = serviceLocator.GetService<IServiceProvider>();
+}
+
+<p>
+    InjectedProvider : @InjectedProvider.GetHashCode()
+</p>
+<p>
+    providerFromInjected : @providerFromInjected.GetHashCode()
+</p>
+<hr />
+<p>
+    serviceLocator: @serviceLocator.GetType().FullName
+</p>
+<p>
+    providerFromLocator : @providerFromLocator.GetHashCode()
+</p>
+<hr />
+<p>
+    rootServiceProvider : @ServiceLocator.RootProvider.GetHashCode()
+</p>
+<p>
+    currentProvider : @ServiceLocator.CurrentProvider.GetHashCode()
+</p>
+

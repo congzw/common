@@ -69,7 +69,7 @@ namespace Common
         #region for simple use
 
         public static IServiceLocator Current => Instance.Resolve();
-        public static ServiceLocator Instance => new ServiceLocator();
+        public static ServiceLocator Instance = new ServiceLocator();
 
         #endregion
     }

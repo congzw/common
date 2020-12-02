@@ -1,4 +1,5 @@
 ﻿using System;
+using Common;
 using Common.Modules;
 using Common.Modules.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,8 @@ namespace NbSites.Web
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMyServiceLocator();
+
             var moduleStartupHelper = ModuleStartupHelper.Instance;
             moduleStartupHelper.GetAssemblies = () => moduleStartupHelper.GetAllModuleAssemblies(AppDomain.CurrentDomain.BaseDirectory, "NbSites");
             services.AddMyModules();
@@ -17,6 +20,8 @@ namespace NbSites.Web
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseMyServiceLocator();
+
             app.UseMyModules();
         }
     }

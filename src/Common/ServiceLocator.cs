@@ -41,10 +41,13 @@ namespace Common
     public class ServiceLocator
     {
         public Func<IServiceLocator> Resolve = () => NullLazy.Value;
+
+        private IServiceProvider _rootServiceProvider = null;
         public void Initialize(IServiceProvider rootServiceProvider)
         {
-            if (rootServiceProvider == null) throw new ArgumentNullException(nameof(rootServiceProvider));
+            _rootServiceProvider = rootServiceProvider ?? throw new ArgumentNullException(nameof(rootServiceProvider));
             _returnNull = false;
+            
             Resolve = () =>
             {
                 if (_returnNull)
@@ -63,13 +66,21 @@ namespace Common
                 return NullLazy.Value;
             };
         }
+        private IServiceProvider TryGetRootServiceProvider()
+        {
+            return _rootServiceProvider;
+        }
+
         private static readonly Lazy<NullServiceLocator> NullLazy = new Lazy<NullServiceLocator>(() => new NullServiceLocator());
         private bool _returnNull = true;
 
         #region for simple use
 
         public static IServiceLocator Current => Instance.Resolve();
-        public static ServiceLocator Instance => new ServiceLocator();
+        public static ServiceLocator Instance = new ServiceLocator();
+
+        public static IServiceProvider RootProvider => Instance.TryGetRootServiceProvider();
+        public static IServiceProvider CurrentProvider => Current.GetService<IServiceProvider>();
 
         #endregion
     }
