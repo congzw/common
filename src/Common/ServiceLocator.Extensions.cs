@@ -16,8 +16,8 @@ namespace Common
                 services.AddHttpContextAccessor();
             }
 
-            services.AddScoped<IServiceLocator, ServiceLocator>();
-            
+            services.AddSingleton<IServiceLocator, ServiceLocator>();
+
             return services;
         }
 

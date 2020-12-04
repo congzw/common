@@ -7,11 +7,12 @@ namespace Common
     public class ServiceLocatorSpec
     {
         [TestMethod]
-        public void AddMyServiceLocator_Should_Ok()
+        public void ServiceLocator_Should_Singleton()
         {
             var services = new ServiceCollection();
             services.AddMyServiceLocator();
             var rootProvider = services.BuildServiceProvider();
+            ServiceLocator.SetRootProvider(rootProvider);
 
             var rootLocator = rootProvider.GetRequiredService<IServiceLocator>();
             var rootLocator2 = rootProvider.GetRequiredService<IServiceLocator>();
@@ -24,54 +25,41 @@ namespace Common
                 scopedLocator1 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
                 scopedLocator1.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
             }
-
             using (var scope = rootLocator.GetServiceProvider().CreateScope())
             {
                 scopedLocator2 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
                 scopedLocator2.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
-
-                var scopedLocator3 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
-                scopedLocator3.ShouldEqual(scopedLocator2);
             }
-
-            scopedLocator1.ShouldNotEqual(rootLocator);
-            scopedLocator1.ShouldNotEqual(scopedLocator2);
+            scopedLocator1.ShouldEqual(rootLocator);
+            scopedLocator1.ShouldEqual(scopedLocator2);
         }
 
         [TestMethod]
-        public void ServiceProvider_Resolve_Should_Ok()
+        public void ServiceLocator_NotAddMyServiceLocator_Should_Singleton()
         {
             var services = new ServiceCollection();
             services.AddMyServiceLocator();
             var rootProvider = services.BuildServiceProvider();
             ServiceLocator.SetRootProvider(rootProvider);
-            
-            IServiceLocator rootLocator = null;
-            IServiceLocator rootLocator2 = null;
-            IServiceLocator scopedLocator1 = null;
-            IServiceLocator scopedLocator2 = null;
 
-            rootLocator = ServiceLocator.Resolve();
-            rootLocator2 = ServiceLocator.Resolve();
+            var rootLocator = ServiceLocator.Current.GetRequiredService<IServiceLocator>();
+            var rootLocator2 = ServiceLocator.Current.GetRequiredService<IServiceLocator>();
             rootLocator2.ShouldEqual(rootLocator);
 
-            using (var scope = rootProvider.CreateScope())
+            IServiceLocator scopedLocator1;
+            IServiceLocator scopedLocator2;
+            using (var scope = rootLocator.GetServiceProvider().CreateScope())
             {
                 scopedLocator1 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
                 scopedLocator1.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
             }
-
-            using (var scope = rootProvider.CreateScope())
+            using (var scope = rootLocator.GetServiceProvider().CreateScope())
             {
                 scopedLocator2 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
                 scopedLocator2.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
-
-                var scopedLocator3 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
-                scopedLocator3.ShouldEqual(scopedLocator2);
             }
-
-            scopedLocator1.ShouldNotEqual(rootLocator);
-            scopedLocator1.ShouldNotEqual(scopedLocator2);
+            scopedLocator1.ShouldEqual(rootLocator);
+            scopedLocator1.ShouldEqual(scopedLocator2);
         }
     }
 }

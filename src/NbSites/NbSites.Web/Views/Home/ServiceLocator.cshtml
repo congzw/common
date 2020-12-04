@@ -1,30 +1,39 @@
 ﻿@using Microsoft.Extensions.DependencyInjection
 @using Common
 @inject IServiceProvider InjectedProvider
+@inject IServiceLocator InjectedLocator
 @{
+    var providerInjected = InjectedProvider;
     var providerFromInjected = InjectedProvider.GetService<IServiceProvider>();
-    var serviceLocator = ServiceLocator.Current;
-    var providerFromLocator = serviceLocator.GetService<IServiceProvider>();
+    var providerFromServiceLocatorCurrent = ServiceLocator.Current;
+    var providerFromServiceLocatorCurrentResolve = ServiceLocator.Current.GetService<IServiceProvider>();
+
+    var locatorInjected = InjectedLocator;
+    var locatorFromServiceLocatorCurrent = ServiceLocator.Current.GetService<IServiceLocator>();
+    var locatorFromServiceLocatorCurrentResolve = InjectedLocator.GetServiceProvider().GetService<IServiceLocator>();
 }
 
+<h2>provider</h2>
 <p>
-    InjectedProvider : @InjectedProvider.GetHashCode()
+    providerInjected : @providerInjected.GetHashCode()
 </p>
 <p>
     providerFromInjected : @providerFromInjected.GetHashCode()
 </p>
+<p>
+    providerFromServiceLocatorCurrent : @providerFromServiceLocatorCurrent.GetHashCode()
+</p>
+<p>
+    providerFromServiceLocatorCurrentResolve : @providerFromServiceLocatorCurrentResolve.GetHashCode()
+</p>
 <hr />
+<h2>locator</h2>
 <p>
-    serviceLocator: @serviceLocator.GetType().FullName
+    locatorInjected: @locatorInjected.GetHashCode()
 </p>
 <p>
-    providerFromLocator : @providerFromLocator.GetHashCode()
-</p>
-<hr />
-<p>
-    rootServiceProvider : @ServiceLocator.RootProvider.GetHashCode()
+    locatorFromServiceLocatorCurrent: @locatorFromServiceLocatorCurrent.GetHashCode()
 </p>
 <p>
-    currentProvider : @ServiceLocator.CurrentProvider.GetHashCode()
+    locatorFromServiceLocatorCurrentResolve: @locatorFromServiceLocatorCurrentResolve.GetHashCode()
 </p>
-
