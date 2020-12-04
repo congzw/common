@@ -15,21 +15,21 @@ namespace Common
             AssertHelper.ShouldThrows<T>(action);
         }
 
-        public static object ShouldNull(this object value)
+        public static T ShouldNull<T>(this T value)
         {
             AssertHelper.WriteLineForShouldBeNull(value);
             Assert.IsNull(value);
             return value;
         }
 
-        public static object ShouldNotNull(this object value)
+        public static T ShouldNotNull<T>(this T value)
         {
             AssertHelper.WriteLineForShouldBeNotNull(value);
             Assert.IsNotNull(value);
             return value;
         }
 
-        public static object ShouldEqual(this object value, object expectedValue)
+        public static T ShouldEqual<T>(this T value, object expectedValue)
         {
             string message = string.Format("Should {0} equals {1}", value, expectedValue);
             Assert.AreEqual(expectedValue, value, message.WithKoPrefix());
@@ -37,7 +37,7 @@ namespace Common
             return value;
         }
 
-        public static object ShouldNotEqual(this object value, object expectedValue)
+        public static T ShouldNotEqual<T>(this T value, object expectedValue)
         {
             string message = string.Format("Should {0} not equals {1}", value, expectedValue);
             Assert.AreNotEqual(expectedValue, value, message.WithKoPrefix());
@@ -45,7 +45,7 @@ namespace Common
             return value;
         }
 
-        public static object ShouldSame(this object value, object expectedValue)
+        public static T ShouldSame<T>(this T value, object expectedValue)
         {
             if (value == null || expectedValue == null)
             {
@@ -58,7 +58,7 @@ namespace Common
             return value;
         }
 
-        public static object ShouldNotSame(this object value, object expectedValue)
+        public static T ShouldNotSame<T>(this T value, object expectedValue)
         {
             if (value == null || expectedValue == null)
             {
@@ -90,21 +90,21 @@ namespace Common
             return values;
         }
 
-        public static object LogHashCode(this object value)
+        public static T LogHashCode<T>(this T value)
         {
             string message = string.Format("{0} <{1}>", value.GetHashCode(), value.GetType().Name);
             AssertHelper.WriteLine(message);
             return value;
         }
 
-        public static object LogHashCodeWiths(this object value, object value2)
+        public static T LogHashCodes<T>(this T value, object value2)
         {
-            string message = string.Format("{0} <{1}> {2} {3}<{4}>", value.GetHashCode(), value.GetType().Name, value == value2 ? "==" : "!=", value2.GetHashCode(), value2.GetType().Name);
+            string message = string.Format("{0} <{1}> {2} {3}<{4}>", value.GetHashCode(), value.GetType().Name, value.Equals(value2) ? "==" : "!=", value2.GetHashCode(), value2.GetType().Name);
             AssertHelper.WriteLine(message);
             return value;
         }
 
-        public static object Log(this object value)
+        public static T Log<T>(this T value)
         {
             if (value == null)
             {

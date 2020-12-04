@@ -18,8 +18,8 @@ namespace Common.Logs
 
         #region for extensions and simple use
 
-        private static readonly Lazy<LogHelper> _lazy = new Lazy<LogHelper>(() => new LogHelper());
-        public static ILogHelper Instance => ServiceLocator.Current.GetService<ILogHelper>() ?? _lazy.Value;
+        private static readonly Lazy<LogHelper> Lazy = new Lazy<LogHelper>(() => new LogHelper());
+        public static ILogHelper Instance => ServiceLocator.Current.GetService<ILogHelper>(() => Lazy.Value);
         public static void Debug(string message)
         {
             Instance.Debug(message);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Common
@@ -8,87 +7,71 @@ namespace Common
     public class ServiceLocatorSpec
     {
         [TestMethod]
-        public void Current_NotInit_Should_ReturnDefault()
+        public void AddMyServiceLocator_Should_Ok()
         {
-            var theLocator = ServiceLocator.Current;
-            theLocator.ShouldNotNull();
-            theLocator.GetType().ShouldEqual(typeof(NullServiceLocator));
-            theLocator.GetServices<object>().ShouldEmpty();
-            theLocator.GetService<object>().ShouldNull();
+            var services = new ServiceCollection();
+            services.AddMyServiceLocator();
+            var rootProvider = services.BuildServiceProvider();
+
+            var rootLocator = rootProvider.GetRequiredService<IServiceLocator>();
+            var rootLocator2 = rootProvider.GetRequiredService<IServiceLocator>();
+            rootLocator2.ShouldEqual(rootLocator);
+
+            IServiceLocator scopedLocator1;
+            IServiceLocator scopedLocator2;
+            using (var scope = rootLocator.GetServiceProvider().CreateScope())
+            {
+                scopedLocator1 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
+                scopedLocator1.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
+            }
+
+            using (var scope = rootLocator.GetServiceProvider().CreateScope())
+            {
+                scopedLocator2 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
+                scopedLocator2.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
+
+                var scopedLocator3 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
+                scopedLocator3.ShouldEqual(scopedLocator2);
+            }
+
+            scopedLocator1.ShouldNotEqual(rootLocator);
+            scopedLocator1.ShouldNotEqual(scopedLocator2);
         }
 
         [TestMethod]
-        public void Current_Replace_Should_ReturnMock()
+        public void ServiceProvider_Resolve_Should_Ok()
         {
-            var serviceLocator = new ServiceLocator();
-            var rootServiceProvider = new MockRootServiceProvider(true);
-            serviceLocator.Initialize(rootServiceProvider);
+            var services = new ServiceCollection();
+            services.AddMyServiceLocator();
+            var rootProvider = services.BuildServiceProvider();
+            ServiceLocator.SetRootProvider(rootProvider);
+            
+            IServiceLocator rootLocator = null;
+            IServiceLocator rootLocator2 = null;
+            IServiceLocator scopedLocator1 = null;
+            IServiceLocator scopedLocator2 = null;
 
-            var theLocator = serviceLocator.Resolve();
-            theLocator.ShouldNotNull();
-            theLocator.GetType().ShouldEqual(typeof(MockServiceLocator));
-        }
+            rootLocator = ServiceLocator.Resolve();
+            rootLocator2 = ServiceLocator.Resolve();
+            rootLocator2.ShouldEqual(rootLocator);
 
-        [TestMethod]
-        public void Current_NotReplace_Should_ReturnDefault()
-        {
-            var serviceLocator = new ServiceLocator();
-            var rootServiceProvider = new MockRootServiceProvider(false);
-            serviceLocator.Initialize(rootServiceProvider);
-
-            var theLocator = serviceLocator.Resolve();
-            theLocator.ShouldNotNull();
-            theLocator.GetType().ShouldEqual(typeof(NullServiceLocator));
-        }
-    }
-
-    public class MockRootServiceProvider : IServiceProvider 
-    {
-        public bool Replaced { get; }
-
-        public MockRootServiceProvider(bool replaced)
-        {
-            Replaced = replaced;
-        }
-
-        public object GetService(Type serviceType)
-        {
-            if (serviceType.IsAssignableFrom(typeof(IServiceProvider)))
+            using (var scope = rootProvider.CreateScope())
             {
-                return this;
+                scopedLocator1 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
+                scopedLocator1.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
             }
 
-            if (serviceType.IsAssignableFrom(typeof(IServiceLocator)))
+            using (var scope = rootProvider.CreateScope())
             {
-                return Replaced ? new MockServiceLocator() : null;
+                scopedLocator2 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
+                scopedLocator2.ShouldNotNull().GetType().ShouldEqual(typeof(ServiceLocator));
+
+                var scopedLocator3 = scope.ServiceProvider.GetRequiredService<IServiceLocator>();
+                scopedLocator3.ShouldEqual(scopedLocator2);
             }
 
-            return null;
-        }
-    }
-
-    public class MockServiceLocator : IServiceLocator
-    {
-        public bool Invoked { get; set; }
-
-        public T GetService<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<T> GetServices<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public object GetService(Type type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<object> GetServices(Type type)
-        {
-            throw new NotImplementedException();
+            scopedLocator1.ShouldNotEqual(rootLocator);
+            scopedLocator1.ShouldNotEqual(scopedLocator2);
         }
     }
 }

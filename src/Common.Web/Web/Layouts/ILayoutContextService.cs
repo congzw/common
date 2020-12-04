@@ -14,7 +14,7 @@ namespace Common.Web.Layouts
             return new LayoutContext { Layout = "_Layout" };
         }
 
-        private static readonly Lazy<LayoutContextService> _lazy = new Lazy<LayoutContextService>(() => new LayoutContextService());
-        public static Func<ILayoutContextService> Resolve { get; set; } = () => ServiceLocator.Current.GetService<ILayoutContextService>() ?? _lazy.Value;
+        private static readonly Lazy<LayoutContextService> Lazy = new Lazy<LayoutContextService>(() => new LayoutContextService());
+        public static Func<ILayoutContextService> Resolve { get; set; } = () => ServiceLocator.Current.GetService<ILayoutContextService>(() => Lazy.Value);
     }
 }

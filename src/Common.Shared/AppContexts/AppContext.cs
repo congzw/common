@@ -17,7 +17,7 @@ namespace Common.AppContexts
         public static MyAppContext Current => Resolve();
 
         private static readonly Lazy<MyAppContext> _lazy = new Lazy<MyAppContext>(() => new MyAppContext());
-        public static Func<MyAppContext> Resolve { get; set; } = () => ServiceLocator.Current.GetService<MyAppContext>() ?? _lazy.Value;
+        public static Func<MyAppContext> Resolve { get; set; } = () => ServiceLocator.Current.GetService(typeof(MyAppContext)) as MyAppContext ?? _lazy.Value;
 
         #endregion
     }

@@ -1,75 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common
 {
     public interface IServiceLocator
     {
-        T GetService<T>();
-        IEnumerable<T> GetServices<T>();
-        object GetService(Type type);
-        IEnumerable<object> GetServices(Type type);
-    }
-
-    public class NullServiceLocator : IServiceLocator
-    {
-        public T GetService<T>()
-        {
-            return default(T);
-        }
-
-        public IEnumerable<T> GetServices<T>()
-        {
-            return Enumerable.Empty<T>();
-        }
-
-        public object GetService(Type type)
-        {
-            return null;
-        }
-
-        public IEnumerable<object> GetServices(Type type)
-        {
-            return Enumerable.Empty<object>();
-        }
+        /// <summary>
+        /// 获取IServiceProvider
+        /// </summary>
+        /// <returns></returns>
+        IServiceProvider GetServiceProvider();
     }
 
     ////ServiceLocator is an anti-pattern, avoid using it as possible as you can!
     ////only for static inject or legacy code hacking!
-    public class ServiceLocator
+    public class ServiceLocator : IServiceLocator
     {
-        public Func<IServiceLocator> Resolve = () => NullLazy.Value;
-        public void Initialize(IServiceProvider rootServiceProvider)
+        private readonly IServiceProvider _serviceProvider;
+        public ServiceLocator(IServiceProvider serviceProvider)
         {
-            if (rootServiceProvider == null) throw new ArgumentNullException(nameof(rootServiceProvider));
-            _returnNull = false;
-            Resolve = () =>
-            {
-                if (_returnNull)
-                {
-                    return NullLazy.Value;
-                }
-
-                var serviceProvider = rootServiceProvider.GetService<IServiceProvider>();
-                var serviceLocator = serviceProvider.GetService<IServiceLocator>();
-                if (serviceLocator != null)
-                {
-                    return serviceLocator;
-                }
-
-                _returnNull = true;
-                return NullLazy.Value;
-            };
+            _serviceProvider = serviceProvider;
         }
-        private static readonly Lazy<NullServiceLocator> NullLazy = new Lazy<NullServiceLocator>(() => new NullServiceLocator());
-        private bool _returnNull = true;
+        public IServiceProvider GetServiceProvider()
+        {
+            return _serviceProvider;
+        }
 
-        #region for simple use
+        #region for extensions and easy use
 
-        public static IServiceLocator Current => Instance.Resolve();
-        public static ServiceLocator Instance = new ServiceLocator();
+        public static IServiceProvider Current => Resolve().GetServiceProvider();
+
+        public static Func<IServiceLocator> Resolve = GetLocator;
+        private static IServiceLocator GetLocator()
+        {
+            if (_rootProvider == null)
+            {
+                throw new InvalidOperationException("没有通过SetRootProvider初始化！");
+            }
+            var contextAccessor = _rootProvider.GetService<IHttpContextAccessor>();
+            var httpContext = contextAccessor?.HttpContext;
+            if (httpContext != null)
+            {
+                return contextAccessor.HttpContext.RequestServices.GetService<IServiceLocator>();
+            }
+
+            return _rootProvider.GetService<IServiceLocator>();
+        }
+
+        private static IServiceProvider _rootProvider;
+        public static void SetRootProvider(IServiceProvider rootProvider)
+        {
+            _rootProvider = rootProvider;
+        }
 
         #endregion
     }

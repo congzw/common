@@ -34,7 +34,7 @@ namespace Common.Web.MyContexts
             return requestContext;
         }
 
-        private static readonly Lazy<MyContextService> _lazy = new Lazy<MyContextService>(() => new MyContextService());
-        public static Func<IMyContextService> Resolve { get; set; } = () => ServiceLocator.Current.GetService<IMyContextService>() ?? _lazy.Value;
+        private static readonly Lazy<MyContextService> Lazy = new Lazy<MyContextService>(() => new MyContextService());
+        public static Func<IMyContextService> Resolve { get; set; } = () => ServiceLocator.Current.GetService<IMyContextService>(() => Lazy.Value);
     }
 }
